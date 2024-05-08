@@ -8,7 +8,8 @@ import (
 )
 
 type MongoDatabase struct {
-	Client *mongo.Client
+	Client   *mongo.Client
+	Database *mongo.Database
 }
 
 func NewMongoDatabase() MongoDatabase {
@@ -16,8 +17,10 @@ func NewMongoDatabase() MongoDatabase {
 	client, error := mongo.Connect(context.TODO(), options.Client().
 		ApplyURI(uri))
 
+	database := client.Database("hikit")
+
 	if error != nil {
 		panic(error)
 	}
-	return MongoDatabase{Client: client}
+	return MongoDatabase{Client: client, Database: database}
 }

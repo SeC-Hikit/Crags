@@ -5,20 +5,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"hikitapp.org/crags/internal/configs"
 	"hikitapp.org/crags/internal/models"
 )
 
 type CragsOperator interface {
-	GetAllCrags(MongoDatabase configs.MongoDatabase) []models.CragDto
-	GetCrag(MongoDatabase configs.MongoDatabase, id string) models.CragDto
+	GetAllCrags() []models.CragDto
+	GetCrag(id string) models.CragDto
+	InsertCrag(dto models.CragDto)
 }
 
 func (c CragsManager) GetAllCrags() []models.CragDto {
-	collection := c.Store.Client.Database("hikit").Collection("Crags")
+	collection := c.Store.Database.Collection("Crags")
 	cursor, err := collection.Find(context.TODO(), bson.D{})
-	count, err := collection.EstimatedDocumentCount(context.TODO())
-	fmt.Println(count)
 	if err != nil {
 		return []models.CragDto{}
 	}
@@ -43,15 +43,36 @@ func (c CragsManager) GetAllCrags() []models.CragDto {
 	}
 
 	return results
-
-	//return []models.CragDto{
-	//	{ID: "1234", Name: "my-name", Picture: "my-pic"},
-	//}
-	//return fetched
 }
 
-func (c CragsManager) GetCrag(mongodb configs.MongoDatabase, id string) models.CragDto {
-	return models.CragDto{ID: "1234", Name: "my-name", Picture: "my-pic"}
+func (c CragsManager) InsertCrag(dto models.CragDto) {
+	crag := models.Crag{Name: dto.Name, Picture: dto.Picture}
+	collection := c.Store.Database.Collection("Crags")
+	_, err := collection.InsertOne(context.TODO(), bson.D{{"name", crag.Name}, {"picture", crag.Picture}})
+	if err != nil {
+
+	}
+}
+
+func (c CragsManager) GetCrag(id string) models.CragDto {
+	collection := c.Store.Database.Collection("Crags")
+	hex, err2 := primitive.ObjectIDFromHex(id)
+	if err2 != nil {
+		//	TODO wtf with error handling
+	}
+
+	one := collection.FindOne(context.TODO(), bson.D{{"_id", hex}})
+
+	var foundCrag models.Crag
+	err := one.Decode(&foundCrag)
+	if err != nil {
+		panic("Issue with decoding from DB")
+	}
+
+	return models.CragDto{
+		ID:      foundCrag.ID.Hex(),
+		Name:    foundCrag.Name,
+		Picture: foundCrag.Picture}
 }
 
 type CragsManager struct {
