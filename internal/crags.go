@@ -10,7 +10,7 @@ import (
 	"hikitapp.org/crags/internal/models"
 )
 
-type CragsOperator interface {
+type CragsService interface {
 	GetAllCrags() []models.CragDto
 	GetCrag(id string) models.CragDto
 	InsertCrag(dto models.CragDto)
@@ -38,8 +38,8 @@ func (c CragsManager) GetAllCrags() []models.CragDto {
 			panic(err)
 		}
 		fmt.Printf("%s\n", output)
-		results = append(results, models.CragDto{ID: result.ID.Hex(),
-			Name: result.Name, Picture: result.Picture})
+		results = append(results,
+			models.CragDto{ID: result.ID.Hex(), Name: result.Name, Picture: result.Picture})
 	}
 
 	return results
@@ -50,7 +50,7 @@ func (c CragsManager) InsertCrag(dto models.CragDto) {
 	collection := c.Store.Database.Collection("Crags")
 	_, err := collection.InsertOne(context.TODO(), bson.D{{"name", crag.Name}, {"picture", crag.Picture}})
 	if err != nil {
-
+		// TODO manage errors
 	}
 }
 
@@ -69,10 +69,12 @@ func (c CragsManager) GetCrag(id string) models.CragDto {
 		panic("Issue with decoding from DB")
 	}
 
-	return models.CragDto{
-		ID:      foundCrag.ID.Hex(),
-		Name:    foundCrag.Name,
-		Picture: foundCrag.Picture}
+	//TODO implement this
+	panic("Not implemented!")
+	//return models.CragDto{
+	//	ID:      foundCrag.ID.Hex(),
+	//	Name:    foundCrag.Name,
+	//	Picture: foundCrag.Picture}
 }
 
 type CragsManager struct {

@@ -10,22 +10,17 @@ type CragDto struct {
 	Photos            []string    `json:"photos"`
 	RockTypes         []string    `json:"rockTypes"`
 	Orientation       []string    `json:"orientation"`
-	Routes            []string    `json:"routes"`
+	Routes            []RouteDto  `json:"routes"`
 	SuggestedPeriod   []string    `json:"suggestedPeriod"`
 	Municipality      []string    `json:"municipality"`
 	AverageGrade      []string    `json:"averageGrade"`
-	LatitudeLongitude PointDto    `json:"point"`
+	LatitudeLongitude Point       `json:"point"`
 	Geometry          GeometryDto `json:"geometry"`
 	Story             string      `json:"story"`
 	ExternalResources []string    `json:"externalResources"`
 	Creators          []string    `json:"creators"`
 	Record            RecordDto   `json:"record"`
 	Tags              []string    `json:"tags"`
-}
-
-type PointDto struct {
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
 }
 
 type RecordDto struct {
@@ -36,16 +31,16 @@ type RecordDto struct {
 }
 
 type GeometryDto struct {
-	Polygon []PointDto `json:"polygon"`
+	Polygon []Point `json:"polygon"`
 }
 
-type RoutesDto struct {
+type RouteDto struct {
 	Name              string   `json:"name"`
 	Grade             string   `json:"grade"`
 	Length            int      `json:"length"`
 	Description       string   `json:"description"`
 	Media             []string `json:"media"`
 	ClimbingStyle     string   `json:"climbingStyle"`
-	LatitudeLongitude PointDto `json:"point"`
+	LatitudeLongitude Point    `json:"point"`
 	Story             string   `json:"polygon"`
 }
